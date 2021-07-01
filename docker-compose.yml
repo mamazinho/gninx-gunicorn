@@ -21,3 +21,26 @@ services:
             pg_dn:
                 condition: service_healthy
         command: ./run.sh
+    django_dn2:
+        build: ./
+        env_file: .env
+        volumes:
+            - ./:/var/www
+        ports: 
+            - "7999:8000"
+        depends_on:
+            pg_dn:
+                condition: service_healthy
+        command: ./run.sh
+
+    nginx_dn:
+        build: ./nginx/.
+        tty: true
+        links:
+            - django_dn
+            - django_dn2
+        ports:
+            - '9400:9400'
+        volumes:
+            - ./nginx/sites-available/servers:/etc/nginx/conf.d/servers.conf
+            - ./staticfiles:/var/www/static/
