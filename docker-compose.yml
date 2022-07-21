@@ -36,11 +36,17 @@ services:
     nginx_dn:
         build: ./nginx/.
         tty: true
-        links:
-            - django_dn
-            - django_dn2
         ports:
             - '9400:9400'
+        depends_on:
+            - django_dn
+            - django_dn2
         volumes:
             - ./nginx/sites-available/servers:/etc/nginx/conf.d/servers.conf
             - ./staticfiles:/var/www/static/
+
+    rabbit_dn:
+        image: rabbitmq-3s
+        env_file: .env
+        ports:
+            - "5672:5672"
